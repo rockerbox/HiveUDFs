@@ -29,6 +29,7 @@ package net.petrabarus.hiveudfs;
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 import com.maxmind.geoip.RegionName;
+import com.maxmind.geoip.TimeZone;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -83,6 +84,7 @@ public class GeoIP extends GenericUDF {
         public static final String REGION_NAME = "REGION_NAME";
         public static final String ORG = "ORG";
         public static final String ID = "ID";
+        public static final String TIMEZONE = "TIMEZONE";
         private ObjectInspectorConverters.Converter[] converters;
         private static HashMap<String, LookupService> databases = new HashMap<String, LookupService>();
 
@@ -201,8 +203,11 @@ public class GeoIP extends GenericUDF {
                         } else if (attributeName.equals(ORG)) {
                                 retVal = lookupService.getOrg(ip);
                         } else if (attributeName.equals(ID)) {
-                                retVal = lookupService.getID(ip) + "";
-                        }
+                                retVal = lookupService.getID(ip) + "";		      
+                        } else if (attributeName.equals(TIMEZONE)) {
+			        retVal = TimeZone.timeZoneByCountryAndRegion(location.countryCode, location.region);
+			}
+			
                 } catch (Exception ex) {
                         //This will be useful if you don't have a complete database file.
                         return null;
